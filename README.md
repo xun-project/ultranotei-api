@@ -1,5 +1,5 @@
-# Conceal-API: Javascript/Node.js interface (RPC/API)
-Javascript/Node.js interface to Conceal cryptocurrency RPC/API.
+# UltraNoteI-API: Javascript/Node.js interface (RPC/API)
+Javascript/Node.js interface to UltraNoteI cryptocurrency RPC/API.
 
 There are three RPC servers built in to the three programs *ultranoteid*, *ultranoteiwallet* and *walletd*.
 They can each be started with the argument `--help` to display command line options.
