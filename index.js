@@ -1,4 +1,4 @@
-module.exports = CCX;
+module.exports = XUNI;
 
 const http = require('http');
 const https = require('https');
@@ -14,14 +14,14 @@ const err = {
   hex: ' must be a hexadecimal string',
   opts: 'opts must be object',
   hex64: ' must be 64-digit hexadecimal string',
-  addr: ' must be 98-character string beginning with ccx',
-  raw: ' must be a raw amount of CCX (X)',
-  trans: ' must be a transfer object { address: 98-character string beginning with ccx, amount: raw amount of CCX (X), message: optional string }',
+  addr: ' must be 98-character string beginning with xuni',
+  raw: ' must be a raw amount of XUNI (X)',
+  trans: ' must be a transfer object { address: 98-character string beginning with xuni, amount: raw amount of XUNI (X), message: optional string }',
   arr: ' must be an array',
   str: ' must be a string'
 };
 
-function CCX(host, walletRpcPort, daemonRpcPort, timeout) {
+function XUNI(host, walletRpcPort, daemonRpcPort, timeout) {
   if (!host) throw 'host required';
   const parse = host.match(/^([^:]*):\/\/(.*)$/);
   if (parse[1] === 'http') this.protocol = http;
@@ -33,31 +33,31 @@ function CCX(host, walletRpcPort, daemonRpcPort, timeout) {
   this.timeout = timeout || 5000;
 }
 
-// Wallet RPC -- concealwallet
+// Wallet RPC -- ultranoteiwallet
 
 function wrpc(that, method, params, resolve, reject) {
   request(that.protocol, that.host, that.walletRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
-CCX.prototype.outputs = function () {
+XUNI.prototype.outputs = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'get_outputs', {}, resolve, reject);
   });
 };
 
-CCX.prototype.height = function () {
+XUNI.prototype.height = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'get_height', {}, resolve, reject);
   });
 };
 
-CCX.prototype.balance = function () {
+XUNI.prototype.balance = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'getbalance', {}, resolve, reject);
   });
 };
 
-CCX.prototype.messages = function (opts) {
+XUNI.prototype.messages = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) opts = {};
     else if (!isUndefined(opts.firstTxId) && !isNonNegative(opts.firstTxId)) reject('firstTxId' + err.nonNeg);
@@ -72,38 +72,38 @@ CCX.prototype.messages = function (opts) {
   });
 };
 
-CCX.prototype.payments = function (paymentId) { // incoming payments
+XUNI.prototype.payments = function (paymentId) { // incoming payments
   return new Promise((resolve, reject) => {
     if (!isHex64String(paymentId)) reject('paymentId' + err.hex64);
     else wrpc(this, 'get_payments', { payment_id: paymentId }, resolve, reject);
   });
 };
 
-CCX.prototype.transfers = function () {
+XUNI.prototype.transfers = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'get_transfers', {}, resolve, reject);
   });
 };
 
-CCX.prototype.store = function () {
+XUNI.prototype.store = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'store', {}, resolve, reject);
   });
 };
 
-CCX.prototype.reset = function () {
+XUNI.prototype.reset = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'reset', {}, resolve, reject);
   });
 };
 
-CCX.prototype.optimize = function () {
+XUNI.prototype.optimize = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'optimize', {}, resolve, reject);
   });
 };
 
-CCX.prototype.send = function (opts) {
+XUNI.prototype.send = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (isUndefined(opts.transfers) || !arrayTest(opts.transfers, isTransfer)) reject('transfers' + err.arr + ' of transfers each of which' + err.trans);
@@ -140,59 +140,59 @@ CCX.prototype.send = function (opts) {
 
 // Wallet RPC -- walletd
 
-CCX.prototype.resetOrReplace = function (viewSecretKey) {
+XUNI.prototype.resetOrReplace = function (viewSecretKey) {
   return new Promise((resolve, reject) => {
     if (!isUndefined(viewSecretKey) && !isHex64String(viewSecretKey)) reject('viewSecretKey' + err.hex64);
     else wrpc(this, 'reset', { viewSecretKey: viewSecretKey }, resolve, reject);
   });
 };
 
-CCX.prototype.status = function () {
+XUNI.prototype.status = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'getStatus', {}, resolve, reject);
   });
 };
 
-CCX.prototype.getBalance = function (address) {
+XUNI.prototype.getBalance = function (address) {
   return new Promise((resolve, reject) => {
     if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
     else wrpc(this, 'getBalance', { address: address }, resolve, reject);
   });
 };
 
-CCX.prototype.createAddress = function () {
+XUNI.prototype.createAddress = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'createAddress', {}, resolve, reject);
   });
 };
 
-CCX.prototype.deleteAddress = function (address) {
+XUNI.prototype.deleteAddress = function (address) {
   return new Promise((resolve, reject) => {
     if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
     wrpc(this, 'deleteAddress', { address: address }, resolve, reject);
   });
 };
 
-CCX.prototype.getAddresses = function () {
+XUNI.prototype.getAddresses = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'getAddresses', {}, resolve, reject);
   });
 };
 
-CCX.prototype.getViewSecretKey = function () {
+XUNI.prototype.getViewSecretKey = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'getViewKey', {}, resolve, reject);
   });
 };
 
-CCX.prototype.getSpendKeys = function (address) {
+XUNI.prototype.getSpendKeys = function (address) {
   return new Promise((resolve, reject) => {
     if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
     else wrpc(this, 'getSpendKeys', { address: address }, resolve, reject);
   });
 };
 
-CCX.prototype.getBlockHashes = function (firstBlockIndex, blockCount) {
+XUNI.prototype.getBlockHashes = function (firstBlockIndex, blockCount) {
   return new Promise((resolve, reject) => {
     if (isUndefined(firstBlockIndex) || !isNonNegative(firstBlockIndex)) reject('firstBlockIndex' + err.nonNeg);
     else if (isUndefined(blockCount) || !isNonNegative(blockCount)) reject('blockCount' + err.nonNeg);
@@ -200,21 +200,21 @@ CCX.prototype.getBlockHashes = function (firstBlockIndex, blockCount) {
   });
 };
 
-CCX.prototype.getTransaction = function (hash) {
+XUNI.prototype.getTransaction = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else wrpc(this, 'getTransaction', { transactionHash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.getUnconfirmedTransactionHashes = function (addresses) {
+XUNI.prototype.getUnconfirmedTransactionHashes = function (addresses) {
   return new Promise((resolve, reject) => {
     if (!isUndefined(addresses) && !arrayTest(addresses, isAddress)) reject('addresses' + err.arr + ' of addresses each of which' + err.addr);
     else wrpc(this, 'getUnconfirmedTransactionHashes', { addresses: addresses }, resolve, reject);
   });
 };
 
-CCX.prototype.getTransactionHashes = function (opts) {
+XUNI.prototype.getTransactionHashes = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (!isNonNegative(opts.blockCount)) reject('blockCount' + err.nonNeg);
@@ -227,7 +227,7 @@ CCX.prototype.getTransactionHashes = function (opts) {
   });
 };
 
-CCX.prototype.getTransactions = function (opts) {
+XUNI.prototype.getTransactions = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (!isNonNegative(opts.blockCount)) reject('blockCount' + err.nonNeg);
@@ -240,7 +240,7 @@ CCX.prototype.getTransactions = function (opts) {
   });
 };
 
-CCX.prototype.sendTransaction = function (opts) {
+XUNI.prototype.sendTransaction = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (isUndefined(opts.transfers) || !arrayTest(opts.transfers, isTransfer)) reject('transfers' + err.arr + ' of transfers each of which' + err.trans);
@@ -272,7 +272,7 @@ CCX.prototype.sendTransaction = function (opts) {
   });
 };
 
-CCX.prototype.createDelayedTransaction = function (opts) {
+XUNI.prototype.createDelayedTransaction = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (isUndefined(opts.transfers) || !arrayTest(opts.transfers, isTransfer)) reject('transfers' + err.arr + ' of transfers each of which' + err.trans);
@@ -298,27 +298,27 @@ CCX.prototype.createDelayedTransaction = function (opts) {
   });
 };
 
-CCX.prototype.getDelayedTransactionHashes = function () {
+XUNI.prototype.getDelayedTransactionHashes = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'getDelayedTransactionHashes', {}, resolve, reject);
   });
 };
 
-CCX.prototype.deleteDelayedTransaction = function (hash) {
+XUNI.prototype.deleteDelayedTransaction = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else wrpc(this, 'deleteDelayedTransaction', { transactionHash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.sendDelayedTransaction = function (hash) {
+XUNI.prototype.sendDelayedTransaction = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else wrpc(this, 'sendDelayedTransaction', { transactionHash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.getMessagesFromExtra = function (extra) {
+XUNI.prototype.getMessagesFromExtra = function (extra) {
   return new Promise((resolve, reject) => {
     if (!isHexString(extra)) reject('extra' + err.hex);
     else wrpc(this, 'getMessagesFromExtra', { extra: extra }, resolve, reject);
@@ -331,73 +331,73 @@ function drpc(that, method, params, resolve, reject) {
   request(that.protocol, that.host, that.daemonRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
-CCX.prototype.count = function () {
+XUNI.prototype.count = function () {
   return new Promise((resolve, reject) => {
     drpc(this, 'getblockcount', {}, resolve, reject);
   });
 };
 
-CCX.prototype.blockHashByHeight = function (height) {
+XUNI.prototype.blockHashByHeight = function (height) {
   return new Promise((resolve, reject) => {
     if (!isNonNegative(height)) reject('height' + err.nonNeg);
     else drpc(this, 'on_getblockhash', [height], resolve, reject);
   });
 };
 
-CCX.prototype.blockHeaderByHash = function (hash) {
+XUNI.prototype.blockHeaderByHash = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else drpc(this, 'getblockheaderbyhash', { hash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.blockHeaderByHeight = function (height) {
+XUNI.prototype.blockHeaderByHeight = function (height) {
   return new Promise((resolve, reject) => {
     if (!isNonNegative(height)) reject('height' + err.nonNeg);
     else drpc(this, 'getblockheaderbyheight', { height: height }, resolve, reject);
   });
 };
 
-CCX.prototype.lastBlockHeader = function () {
+XUNI.prototype.lastBlockHeader = function () {
   return new Promise((resolve, reject) => {
     drpc(this, 'getlastblockheader', {}, resolve, reject);
   });
 };
 
-CCX.prototype.block = function (hash) {
+XUNI.prototype.block = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else drpc(this, 'f_block_json', { hash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.blocks = function (height) {
+XUNI.prototype.blocks = function (height) {
   return new Promise((resolve, reject) => {
     if (!isNonNegative(height)) reject('height' + err.nonNeg);
     else drpc(this, 'f_blocks_list_json', { height: height }, resolve, reject);
   });
 };
 
-CCX.prototype.transaction = function (hash) {
+XUNI.prototype.transaction = function (hash) {
   return new Promise((resolve, reject) => {
     if (!isHex64String(hash)) reject('hash' + err.hex64);
     else drpc(this, 'f_transaction_json', { hash: hash }, resolve, reject);
   });
 };
 
-CCX.prototype.transactionPool = function () {
+XUNI.prototype.transactionPool = function () {
   return new Promise((resolve, reject) => {
     drpc(this, 'f_on_transactions_pool_json', {}, resolve, reject);
   });
 };
 
-CCX.prototype.currencyId = function () {
+XUNI.prototype.currencyId = function () {
   return new Promise((resolve, reject) => {
     drpc(this, 'getcurrencyid', {}, resolve, reject);
   });
 };
 
-CCX.prototype.blockTemplate = function (opts) {
+XUNI.prototype.blockTemplate = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts);
     else if (!isAddress(opts.address)) reject('address' + err.addr);
@@ -406,7 +406,7 @@ CCX.prototype.blockTemplate = function (opts) {
   });
 };
 
-CCX.prototype.submitBlock = function (block) {
+XUNI.prototype.submitBlock = function (block) {
   return new Promise((resolve, reject) => {
     if (!isHexString(block)) reject('block' + err.hex);
     else drpc(this, 'submitblock', [block], resolve, reject);
@@ -419,19 +419,19 @@ function hrpc(that, params, path, resolve, reject) {
   request(that.protocol, that.host, that.daemonRpcPort, that.timeout, JSON.stringify(params), path, resolve, reject);
 }
 
-CCX.prototype.info = function () {
+XUNI.prototype.info = function () {
   return new Promise((resolve, reject) => {
     hrpc(this, {}, '/getinfo', resolve, reject);
   });
 };
 
-CCX.prototype.index = function () {
+XUNI.prototype.index = function () {
   return new Promise((resolve, reject) => {
     hrpc(this, {}, '/getheight', resolve, reject);
   });
 };
 /*
-CCX.prototype.startMining = function (opts) {
+XUNI.prototype.startMining = function (opts) {
   return new Promise((resolve, reject) => {
     if (!isObject(opts)) reject(err.opts)
     else if (!isAddress(opts.address)) reject('address' + err.addr)
@@ -440,20 +440,20 @@ CCX.prototype.startMining = function (opts) {
   })
 }
 
-CCX.prototype.stopMining = function () {
+XUNI.prototype.stopMining = function () {
   return new Promise((resolve, reject) => {
     hrpc(this, { }, '/stop_mining', resolve, reject)
   })
 }
 */
-CCX.prototype.transactions = function (txs) {
+XUNI.prototype.transactions = function (txs) {
   return new Promise((resolve, reject) => {
     if (!arrayTest(txs, isHex64String)) reject('txs' + err.arr + ' of transactions each of which ' + err.hex64);
     else hrpc(this, { txs_hashes: txs }, '/gettransactions', resolve, reject);
   });
 };
 
-CCX.prototype.sendRawTransaction = function (rawTx) {
+XUNI.prototype.sendRawTransaction = function (rawTx) {
   return new Promise((resolve, reject) => {
     if (!isHexString(rawTx)) reject('rawTx' + err.hex);
     else hrpc(this, { tx_as_hex: rawTx }, '/sendrawtransaction', resolve, reject);
@@ -486,7 +486,7 @@ function isNonNegative(n) { return (Number.isInteger(n) && n >= 0); }
 
 function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
 
-function isAddress(str) { return (typeof str === 'string' && str.length === 98 && str.slice(0, 3) === 'ccx'); }
+function isAddress(str) { return (typeof str === 'string' && str.length === 98 && str.slice(0, 3) === 'xuni'); }
 
 function isHex64String(str) { return (typeof str === 'string' && /^[0-9a-fA-F]{64}$/.test(str)); }
 
