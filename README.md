@@ -35,7 +35,12 @@ $ node test.js
 The test program could contain, for example, a payment via the simple wallet's RPC server
 ```
 const XUNI = require('ultranotei-api')
-const xuni = new XUNI('http://localhost', '3333')
+const ccx = new XUNI({
+  daemonHost: 'http://localhost', 
+  walletHost: 'http://localhost', 
+  daemonRpcPort: 43000,
+  walletRpcPort: 3333
+})
 
 xuni.send([{
   address: 'xuni7Xd3NBbBiQNvv7vMLXmGMHyS8AVB6EhWoHo5EbGfR2Ki9pQnRTfEBt3YxYEVqpUCyJgvPjBYHp8N2yZwA7dqb4PjaGWuvs4',
@@ -47,7 +52,13 @@ xuni.send([{
 ## API
 ```
 const XUNI = require('ultranotei-api')
-const xuni = new XUNI(host, walletRpcPort, daemonRpcPort, timeout)
+const xuni = new XUNI({
+  daemonHost: <daemonHost>, 
+  walletHost: <walletHost>,
+  daemonRpcPort: <daemonRpcPort>,
+  walletRpcPort: <walletRpcPort>,
+  timeout: <timeout>
+})
 ```
 xuni.rpc returns a promise, where *rpc* is any of the methods below:
 

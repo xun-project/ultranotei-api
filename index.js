@@ -6,8 +6,8 @@ const https = require('https');
 const MAX_MIXIN = 10;
 const MIN_MIXIN = 2;
 const DEFAULT_UNLOCK_HEIGHT = 0;
-const DEFAULT_FEE = 10; // raw X
-const DEFAULT_CHARACTER_FEE = 10; // raw X
+const DEFAULT_FEE = 10000; // raw X
+const DEFAULT_CHARACTER_FEE = 1000; // raw X
 
 const err = {
   nonNeg: ' must be a non-negative integer',
@@ -21,22 +21,33 @@ const err = {
   str: ' must be a string'
 };
 
-function XUNI(host, walletRpcPort, daemonRpcPort, timeout) {
-  if (!host) throw 'host required';
-  const parse = host.match(/^([^:]*):\/\/(.*)$/);
-  if (parse[1] === 'http') this.protocol = http;
-  else if (parse[1] === 'https') this.protocol = https;
-  else throw 'host must begin with http(s)://';
-  this.host = parse[2];
-  this.walletRpcPort = walletRpcPort;
-  this.daemonRpcPort = daemonRpcPort;
-  this.timeout = timeout || 5000;
+function XUNI(params) {
+  if (!params) throw 'parameters are required';
+  if (typeof params != 'object') throw 'parameters must be a JSON object';
+  if (!params.daemonHost) params.daemonHost = '127.0.0.1';
+  if (!params.walletHost) params.walletHost = '127.0.0.1';
+  const parseDaemon = params.daemonHost.match(/^([^:]*):\/\/(.*)$/);
+  const parseWallet = params.walletHost.match(/^([^:]*):\/\/(.*)$/);
+
+  if (parseDaemon[1] === 'http') this.daemonProtocol = http;
+  else if (parseDaemon[1] === 'https') this.daemonProtocol = https;
+  else throw 'Daemon host must begin with http(s)://';
+
+  if (parseWallet[1] === 'http') this.walletProtocol = http;
+  else if (parseWallet[1] === 'https') this.walletProtocol = https;
+  else throw 'Wallet host must begin with http(s)://';
+
+  this.daemonHost = parseDaemon[2];
+  this.walletHost = parseWallet[2];
+  this.walletRpcPort = params.walletRpcPort;
+  this.daemonRpcPort = params.daemonRpcPort;
+  this.timeout = params.timeout || 5000;
 }
 
-// Wallet RPC -- ultranoteiwallet
+// Wallet RPC -- concealwallet
 
 function wrpc(that, method, params, resolve, reject) {
-  request(that.protocol, that.host, that.walletRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
+  request(that.walletProtocol, that.walletHost, that.walletRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
 XUNI.prototype.outputs = function () {
@@ -328,7 +339,7 @@ XUNI.prototype.getMessagesFromExtra = function (extra) {
 // Daemon RPC - JSON RPC
 
 function drpc(that, method, params, resolve, reject) {
-  request(that.protocol, that.host, that.daemonRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
+  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
 XUNI.prototype.count = function () {
@@ -416,7 +427,7 @@ XUNI.prototype.submitBlock = function (block) {
 // Daemon RPC - JSON handlers
 
 function hrpc(that, params, path, resolve, reject) {
-  request(that.protocol, that.host, that.daemonRpcPort, that.timeout, JSON.stringify(params), path, resolve, reject);
+  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.timeout, JSON.stringify(params), path, resolve, reject);
 }
 
 XUNI.prototype.info = function () {
@@ -439,7 +450,6 @@ XUNI.prototype.startMining = function (opts) {
     else hrpc(this, { miner_address: opts.address, threads_count: opts.threads }, '/start_mining', resolve, reject)
   })
 }
-
 XUNI.prototype.stopMining = function () {
   return new Promise((resolve, reject) => {
     hrpc(this, { }, '/stop_mining', resolve, reject)
@@ -486,7 +496,7 @@ function isNonNegative(n) { return (Number.isInteger(n) && n >= 0); }
 
 function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
 
-function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 4) === 'Xuni'); }
+function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 3) === 'xuni'); }
 
 function isHex64String(str) { return (typeof str === 'string' && /^[0-9a-fA-F]{64}$/.test(str)); }
 
