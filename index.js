@@ -16,7 +16,7 @@ const err = {
   hex64: ' must be 64-digit hexadecimal string',
   addr: ' must be 99-character string beginning with xuni',
   raw: ' must be a raw amount of XUNI (X)',
-  trans: ' must be a transfer object { address: 99-character string beginning with xuni, amount: raw amount of XUNI (X), message: optional string }',
+  trans: ' must be a transfer object { address: 99-character string beginning with Xuni, amount: raw amount of XUNI (X), message: optional string }',
   arr: ' must be an array',
   str: ' must be a string'
 };
