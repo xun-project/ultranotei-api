@@ -52,7 +52,7 @@ xuni.send([{
 ## API
 ```
 const XUNI = require('ultranotei-api')
-const ccx = new CCX({
+const xuni = new XUNI({
   daemonHost: <daemonHost>, 
   walletHost: <walletHost>,
   daemonRpcPort: <daemonRpcPort>,
