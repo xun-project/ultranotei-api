@@ -1,6 +1,6 @@
 {
   "name": "ultranotei-api",
-  "version": "0.7.9",
+  "version": "1.0.0",
   "description": "CJSI: UltraNoteI Javascript Interface - RPC/API",
   "main": "index.js",
   "scripts": {
