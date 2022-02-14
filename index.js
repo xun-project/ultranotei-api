@@ -46,7 +46,7 @@ function XUNI(params) {
   this.auth = !params.rpcUser ? '': `${params.rpcUser}:${params.rpcPassword ? params.rpcPassword:''}`;
 }
 
-// Wallet RPC -- concealwallet
+// Wallet RPC -- UltraNote Infinity
 
 function wrpc(that, method, params, resolve, reject) {
   request(that.walletProtocol, that.walletHost, that.walletRpcPort, that.auth, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
