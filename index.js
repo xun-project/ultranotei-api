@@ -498,7 +498,7 @@ function isNonNegative(n) { return (Number.isInteger(n) && n >= 0); }
 
 function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
 
-function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 3) === 'xuni'); }
+function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 4) === 'Xuni'); }
 
 function isHex64String(str) { return (typeof str === 'string' && /^[0-9a-fA-F]{64}$/.test(str)); }
 
