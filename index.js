@@ -26,9 +26,10 @@ function XUNI(params) {
   if (typeof params != 'object') throw 'parameters must be a JSON object';
   if (!params.daemonHost) params.daemonHost = '127.0.0.1';
   if (!params.walletHost) params.walletHost = '127.0.0.1';
+  
   const parseDaemon = params.daemonHost.match(/^([^:]*):\/\/(.*)$/);
   const parseWallet = params.walletHost.match(/^([^:]*):\/\/(.*)$/);
-
+  
   if (parseDaemon[1] === 'http') this.daemonProtocol = http;
   else if (parseDaemon[1] === 'https') this.daemonProtocol = https;
   else throw 'Daemon host must begin with http(s)://';
@@ -42,12 +43,13 @@ function XUNI(params) {
   this.walletRpcPort = params.walletRpcPort;
   this.daemonRpcPort = params.daemonRpcPort;
   this.timeout = params.timeout || 5000;
+  this.auth = !params.rpcUser ? '': `${params.rpcUser}:${params.rpcPassword ? params.rpcPassword:''}`;
 }
 
 // Wallet RPC -- concealwallet
 
 function wrpc(that, method, params, resolve, reject) {
-  request(that.walletProtocol, that.walletHost, that.walletRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
+  request(that.walletProtocol, that.walletHost, that.walletRpcPort, that.auth, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
 XUNI.prototype.outputs = function () {
@@ -339,7 +341,7 @@ XUNI.prototype.getMessagesFromExtra = function (extra) {
 // Daemon RPC - JSON RPC
 
 function drpc(that, method, params, resolve, reject) {
-  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
+  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.auth, that.timeout, buildRpc(method, params), '/json_rpc', resolve, reject);
 }
 
 XUNI.prototype.count = function () {
@@ -427,7 +429,7 @@ XUNI.prototype.submitBlock = function (block) {
 // Daemon RPC - JSON handlers
 
 function hrpc(that, params, path, resolve, reject) {
-  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.timeout, JSON.stringify(params), path, resolve, reject);
+  request(that.daemonProtocol, that.daemonHost, that.daemonRpcPort, that.auth, that.timeout, JSON.stringify(params), path, resolve, reject);
 }
 
 XUNI.prototype.info = function () {
@@ -504,13 +506,14 @@ function isHexString(str) { return (typeof str === 'string' && !/[^0-9a-fA-F]/.t
 
 function buildRpc(method, params) { return '{"jsonrpc":"2.0","id":"0","method":"' + method + '","params":' + JSON.stringify(params) + '}'; }
 
-function request(protocol, host, port, timeout, post, path, resolve, reject) {
+function request(protocol, host, port, auth, timeout, post, path, resolve, reject) {
   const obj = {
     hostname: host,
     port: port,
     method: 'POST',
     timeout: timeout,
     path: path,
+    auth: auth,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': post.length,
