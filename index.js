@@ -5,7 +5,7 @@ const https = require('https');
 
 const MAX_MIXIN = 10;
 const MIN_MIXIN = 2;
-const DEFAULT_UNLOCK_HEIGHT = 0;
+const DEFAULT_UNLOCK_HEIGHT = 10;
 const DEFAULT_FEE = 10000; // raw X
 const DEFAULT_CHARACTER_FEE = 1000; // raw X
 
