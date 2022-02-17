@@ -262,7 +262,7 @@ XUNI.prototype.sendTransaction = function (opts) {
     else if (!isUndefined(opts.paymentId) && !isHex64String(opts.paymentId)) reject('paymentId' + err.hex64);
     else if (!isUndefined(opts.extra) && !isString(opts.extra)) reject('extra' + err.str);
     else {
-      opts.sourceAddresses = opts.addresses; delete opts.addresses;
+      opts.sourceAddresses = opts.addresses; // delete opts.addresses;
       if (isUndefined(opts.mixIn)) opts.mixIn = MIN_MIXIN;
       if (!(opts.mixIn >= MIN_MIXIN && opts.mixIn <= MAX_MIXIN)) reject(MIN_MIXIN + ' <= mixIn <= ' + MAX_MIXIN);
       else {
