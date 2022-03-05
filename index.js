@@ -472,6 +472,32 @@ XUNI.prototype.sendRawTransaction = function (rawTx) {
   });
 };
 
+XUNI.prototype.estimateFusion = function (opts) {
+  return new Promise((resolve, reject) => {
+    if (!isObject(opts)) reject(err.opts);
+    else if (isUndefined(opts.threshold) || !isNonNegative(opts.threshold)) reject('threshold' + err.nonNeg);
+    else if (!isUndefined(opts.addresses) && !arrayTest(opts.addresses, isAddress)) reject('addresses' + err.arr + ' of addresses each of which' + err.addr);
+    wrpc(this, 'estimateFusion', opts, resolve, reject);
+  });
+}
+
+XUNI.prototype.sendFusionTransaction = function (opts) {
+  return new Promise((resolve, reject) => {
+    if (!isObject(opts)) reject(err.opts);
+    else if (isUndefined(opts.threshold) || !isNonNegative(opts.threshold)) reject('threshold' + err.nonNeg);
+    else if (!isUndefined(opts.addresses) && !arrayTest(opts.addresses, isAddress)) reject('addresses' + err.arr + ' of addresses each of which' + err.addr);
+    else if (opts.addresses.length > 1 && !isUndefined(opts.destinationAddress) && !isAddress(opts.destinationAddress)) reject('destinationAddress' + err.addr);
+    else {
+      if (isUndefined(opts.mixIn)) opts.mixIn = MIN_MIXIN;
+      if (!(opts.mixIn >= MIN_MIXIN && opts.mixIn <= MAX_MIXIN)) reject(MIN_MIXIN + ' <= mixIn <= ' + MAX_MIXIN);
+      else {
+          opts.anonymity = opts.mixIn; delete opts.mixIn;
+          wrpc(this, 'sendFusionTransaction', opts, resolve, reject);
+      }
+    }
+    });
+};
+
 // Utilities
 
 function arrayTest(arr, test) {
