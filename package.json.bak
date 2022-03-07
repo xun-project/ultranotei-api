@@ -1,0 +1,25 @@
+{
+  "name": "ultranotei-api",
+  "version": "3.0.1",
+  "description": "CJSI: UltraNoteI Javascript Interface - RPC/API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xun-project/ultranotei-api.git"
+  },
+  "keywords": [
+    "ultranotei",
+    "cryptocurrency",
+    "rpc",
+    "api"
+  ],
+  "author": "ultranote",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xun-project/ultranotei-api/issues"
+  },
+  "homepage": "https://github.com/xun-project/ultranotei-api#readme"
+}
