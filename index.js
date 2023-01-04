@@ -471,6 +471,16 @@ XUNI.prototype.sendRawTransaction = function (rawTx) {
     else hrpc(this, { tx_as_hex: rawTx }, '/sendrawtransaction', resolve, reject);
   });
 };
+XUNI.prototype.createDeposit = function(opts) {
+  return new Promise((resolve, reject) => {
+    if(!isObject(opts)) reject(err.opts);
+    else if(isUndefined(opts.address) || !isAddress(opts.address)) reject('address is not valid');
+    else if(isUndefined(opts.amount) || !isNonNegative(opts.amount)) reject('amount ' + err.nonNeg);
+    else {
+    wrpc(this, 'createDeposit', opts, resolve, reject);
+    }
+  });
+}
 
 XUNI.prototype.estimateFusion = function (opts) {
   return new Promise((resolve, reject) => {
