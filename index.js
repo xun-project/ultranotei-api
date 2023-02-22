@@ -266,11 +266,11 @@ XUNI.prototype.sendTransaction = function (opts) {
       if (isUndefined(opts.mixIn)) opts.mixIn = MIN_MIXIN;
       if (!(opts.mixIn >= MIN_MIXIN && opts.mixIn <= MAX_MIXIN)) reject(MIN_MIXIN + ' <= mixIn <= ' + MAX_MIXIN);
       else {
-        opts.anonymity = opts.mixIn; delete opts.mixIn;
+        opts.anonymity = opts.mixIn; // delete opts.mixIn;
         if (isUndefined(opts.unlockHeight)) opts.unlockHeight = DEFAULT_UNLOCK_HEIGHT;
         if (!isNonNegative(opts.unlockHeight)) reject('unlockHeight' + err.nonNeg);
         else {
-          opts.unlockTime = opts.unlockHeight; delete opts.unlockHeight;
+          opts.unlockTime = opts.unlockHeight; // delete opts.unlockHeight;
           if (isUndefined(opts.fee)) {
             opts.fee = DEFAULT_FEE;
             opts.transfers.forEach((transfer) => {
