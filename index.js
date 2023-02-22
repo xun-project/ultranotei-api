@@ -562,7 +562,7 @@ function request(protocol, host, port, auth, timeout, post, path, resolve, rejec
       res.on('data', (chunk) => { data = Buffer.concat([data, chunk]); });
       res.on('end', () => {
         try {
-          data = JSON.parse(data.toString());
+          data = JSON.parse(data.toString().replace(/\n/g,"\\n"));
           if (data.error) { reject(data.error.message); return; }
         } catch (error) { reject(error.message); return; }
         if (data.result) data = data.result;
