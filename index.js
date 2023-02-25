@@ -26,10 +26,10 @@ function XUNI(params) {
   if (typeof params != 'object') throw 'parameters must be a JSON object';
   if (!params.daemonHost) params.daemonHost = '127.0.0.1';
   if (!params.walletHost) params.walletHost = '127.0.0.1';
-  
+
   const parseDaemon = params.daemonHost.match(/^([^:]*):\/\/(.*)$/);
   const parseWallet = params.walletHost.match(/^([^:]*):\/\/(.*)$/);
-  
+
   if (parseDaemon[1] === 'http') this.daemonProtocol = http;
   else if (parseDaemon[1] === 'https') this.daemonProtocol = https;
   else throw 'Daemon host must begin with http(s)://';
@@ -43,7 +43,7 @@ function XUNI(params) {
   this.walletRpcPort = params.walletRpcPort;
   this.daemonRpcPort = params.daemonRpcPort;
   this.timeout = params.timeout || 5000;
-  this.auth = !params.rpcUser ? '': `${params.rpcUser}:${params.rpcPassword ? params.rpcPassword:''}`;
+  this.auth = !params.rpcUser ? '' : `${params.rpcUser}:${params.rpcPassword ? params.rpcPassword : ''}`;
 }
 
 // Wallet RPC -- UltraNote Infinity
@@ -338,6 +338,25 @@ XUNI.prototype.getMessagesFromExtra = function (extra) {
   });
 };
 
+XUNI.prototype.createDeposit = function (opts) {
+  return new Promise((resolve, reject) => {
+    if (!isObject(opts)) reject(err.opts);
+    else if (isUndefined(opts.sourceAddress) || !isAddress(opts.sourceAddress)) reject('address' + err.addr);
+    else if (isUndefined(opts.amount) || !isNonNegative(opts.amount)) reject("amount" + err.raw);
+    else if (isUndefined(opts.term) || isNonNegative(opts.term)) reject("term" + err.nonNeg)
+    else wrpc(this, 'createDeposit', opts, resolve, reject);
+  });
+};
+
+XUNI.prototype.withdrawDeposit = function (depositId) {
+  return new Promise((resolve, reject) => {
+    if (!isNonNegative(depositId)) reject('depositId' + err.nonNeg);
+    else wrpc(this, 'withdrawDeposit', { depositId: depositId }, resolve, reject);
+  });
+};
+
+
+
 // Daemon RPC - JSON RPC
 
 function drpc(that, method, params, resolve, reject) {
@@ -501,11 +520,11 @@ XUNI.prototype.sendFusionTransaction = function (opts) {
       if (isUndefined(opts.mixIn)) opts.mixIn = MIN_MIXIN;
       if (!(opts.mixIn >= MIN_MIXIN && opts.mixIn <= MAX_MIXIN)) reject(MIN_MIXIN + ' <= mixIn <= ' + MAX_MIXIN);
       else {
-          opts.anonymity = opts.mixIn; delete opts.mixIn;
-          wrpc(this, 'sendFusionTransaction', opts, resolve, reject);
+        opts.anonymity = opts.mixIn; delete opts.mixIn;
+        wrpc(this, 'sendFusionTransaction', opts, resolve, reject);
       }
     }
-    });
+  });
 };
 
 // Utilities
@@ -562,7 +581,7 @@ function request(protocol, host, port, auth, timeout, post, path, resolve, rejec
       res.on('data', (chunk) => { data = Buffer.concat([data, chunk]); });
       res.on('end', () => {
         try {
-          data = JSON.parse(data.toString().replace(/\n/g,"\\n"));
+          data = JSON.parse(data.toString().replace(/\n/g, "\\n"));
           if (data.error) { reject(data.error.message); return; }
         } catch (error) { reject(error.message); return; }
         if (data.result) data = data.result;
