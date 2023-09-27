@@ -179,6 +179,14 @@ XUNI.prototype.createAddress = function () {
   });
 };
 
+XUNI.prototype.createIntegrated = function (address, paymentId) {
+    return new Promise((resolve, reject) => {
+      if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
+      if (isUndefined(paymentId) || !isHex64String(paymentId)) reject('paymentId' + err.hex64);
+      wrpc(this, 'createIntegrated', { address: address, payment_id: paymentId }, resolve, reject);
+    });
+};
+
 XUNI.prototype.deleteAddress = function (address) {
   return new Promise((resolve, reject) => {
     if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
