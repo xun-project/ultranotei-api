@@ -15,6 +15,7 @@ const err = {
   opts: 'opts must be object',
   hex64: ' must be 64-digit hexadecimal string',
   addr: ' must be 99-character string beginning with Xuni',
+  intAddr:  ' must be 187-character string beginning with Xuni',
   raw: ' must be a raw amount of XUNI (X)',
   trans: ' must be a transfer object { address: 99-character string beginning with Xuni, amount: raw amount of XUNI (X), message: optional string }',
   arr: ' must be an array',
@@ -177,6 +178,14 @@ XUNI.prototype.createAddress = function () {
   return new Promise((resolve, reject) => {
     wrpc(this, 'createAddress', {}, resolve, reject);
   });
+};
+
+XUNI.prototype.createIntegrated = function (address, paymentId) {
+    return new Promise((resolve, reject) => {
+      if (isUndefined(address) || !isAddress(address)) reject('address' + err.addr);
+      if (isUndefined(paymentId) || !isHex64String(paymentId)) reject('paymentId' + err.hex64);
+      wrpc(this, 'createIntegrated', { address: address, payment_id: paymentId }, resolve, reject);
+    });
 };
 
 XUNI.prototype.deleteAddress = function (address) {
@@ -530,6 +539,8 @@ function isNonNegative(n) { return (Number.isInteger(n) && n >= 0); }
 function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
 
 function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 4) === 'Xuni'); }
+
+function isIntAddress(str) { return (typeof str === 'string' && str.length === 187 && str.slice(0, 4) === 'Xuni'); }
 
 function isHex64String(str) { return (typeof str === 'string' && /^[0-9a-fA-F]{64}$/.test(str)); }
 
