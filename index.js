@@ -15,7 +15,7 @@ const err = {
   opts: 'opts must be object',
   hex64: ' must be 64-digit hexadecimal string',
   addr: ' must be 99-character string beginning with Xuni',
-  intAddr:  ' must be 186-character string beginning with Xuni',
+  intAddr:  ' must be 187-character string beginning with Xuni',
   raw: ' must be a raw amount of XUNI (X)',
   trans: ' must be a transfer object { address: 99-character string beginning with Xuni, amount: raw amount of XUNI (X), message: optional string }',
   arr: ' must be an array',
@@ -540,7 +540,7 @@ function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
 
 function isAddress(str) { return (typeof str === 'string' && str.length === 99 && str.slice(0, 4) === 'Xuni'); }
 
-function isIntAddress(str) { return (typeof str === 'string' && str.length === 186 && str.slice(0, 4) === 'Xuni'); }
+function isIntAddress(str) { return (typeof str === 'string' && str.length === 187 && str.slice(0, 4) === 'Xuni'); }
 
 function isHex64String(str) { return (typeof str === 'string' && /^[0-9a-fA-F]{64}$/.test(str)); }
 
