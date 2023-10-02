@@ -191,8 +191,8 @@ XUNI.prototype.createIntegrated = function (address, paymentId) {
 XUNI.prototype.splitIntegrated = function (address) {
 return new Promise((resolve, reject) => {
 if (isUndefined(address) || !isIntAddress(address)) reject('address' + err.intAddr);
-wrpc(this, 'createIntegrated', { integrated_address: address }, resolve, reject);
-   });
+wrpc(this, 'splitIntegrated', { integrated_address: address }, resolve, reject);
+});
 };
 
 XUNI.prototype.deleteAddress = function (address) {
