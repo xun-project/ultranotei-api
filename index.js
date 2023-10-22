@@ -359,7 +359,7 @@ XUNI.prototype.createDeposit = function (opts) {
     if (!isObject(opts)) reject(err.opts);
     else if (isUndefined(opts.sourceAddress) || !isAddress(opts.sourceAddress)) reject('address' + err.addr);
     else if (isUndefined(opts.amount) || !isNonNegative(opts.amount)) reject("amount" + err.raw);
-    else if (isUndefined(opts.term) || isNonNegative(opts.term)) reject("term" + err.nonNeg)
+    else if (isUndefined(opts.term) || !isNonNegative(opts.term)) reject("term" + err.nonNeg)
     else wrpc(this, 'createDeposit', opts, resolve, reject);
   });
 };
