@@ -57,11 +57,11 @@ xuni.status()
   .then(status => console.log('Wallet status:', status))
   .catch(error => console.error('Error:', error));
 
-// Send a transaction
+// Send a transaction (1.234567 XUNI)
 xuni.send({
   transfers: [{
     address: 'xuni7Xd3NBbBiQNvv7vMLXmGMHyS8AVB6EhWoHo5EbGfR2Ki9pQnRTfEBt3YxYEVqpUCyJgvPjBYHp8N2yZwA7dqb4PjaGWuvs4',
-    amount: 1234567
+    amount: 1234567 // 1.234567 XUNI (6 decimal places)
   }]
 })
 .then(result => console.log('Transaction successful:', result))
@@ -157,15 +157,15 @@ console.log('Transaction history:', transfers);
 
 ### Sending Transactions
 ```javascript
-// Send basic transaction
+// Send basic transaction (1.0 XUNI)
 const result = await xuni.send({
   transfers: [{
     address: 'xuni7Xd3NBbBiQNvv7vMLXmGMHyS8AVB6EhWoHo5EbGfR2Ki9pQnRTfEBt3YxYEVqpUCyJgvPjBYHp8N2yZwA7dqb4PjaGWuvs4',
-    amount: 1000000,
+    amount: 1000000, // 1.0 XUNI (6 decimal places)
     message: 'Payment for services'
   }],
   mixIn: 6,
-  fee: 10000
+  fee: 10000 // 0.00001 XUNI fee
 });
 console.log('Transaction result:', result);
 ```
@@ -176,7 +176,7 @@ try {
   const result = await xuni.send({
     transfers: [{
       address: 'invalid-address',
-      amount: 1000000
+      amount: 1000000 // 1.0 XUNI (6 decimal places)
     }]
   });
 } catch (error) {
