@@ -91,6 +91,17 @@ The `XUNI` constructor accepts the following configuration options:
 
 All API methods return Promises and should be used with `.then()`/`.catch()` or `async`/`await`.
 
+**Note:** UltraNoteI uses 6 decimal places. This means:
+- `1000000` = 1.0 XUNI
+- `100000` = 0.1 XUNI  
+- `10000` = 0.01 XUNI
+- `1000` = 0.001 XUNI
+- `100` = 0.0001 XUNI
+- `10` = 0.00001 XUNI
+- `1` = 0.000001 XUNI
+
+All amount parameters in the API expect the raw amount (integer) with 6 decimal places.
+
 ### Wallet RPC Methods (require walletRpcPort)
 
 #### Core Methods
