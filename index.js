@@ -589,7 +589,7 @@ function request(protocol, host, port, auth, timeout, post, path, resolve, rejec
   });
 
   doRequest.on('timeout', () => {
-    reject("RFC timeout");
+    reject("RPC timeout");
     doRequest.abort();
   });
 
